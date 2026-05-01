@@ -80,10 +80,10 @@
       align-items: center;
     }
 
-    .win-check {
-      font-size: 18px;
+    .wins-text {
+      font-size: 14px;
+      font-weight: 600;
       color: #4caf50;
-      font-weight: 700;
     }
 
     /* score row */
@@ -319,7 +319,7 @@
       <span class="player-label">J1</span>
       <button class="action-btn win-btn" onclick="gagneLaManche('J1')">Gagne la manche</button>
     </div>
-    <div class="wins-row" id="wins-J1"></div>
+    <div class="wins-row" id="wins-J1"><span class="wins-text">J1 manches gagnées : 0</span></div>
     <div class="score-row">
       <button class="score-btn" onclick="changeScore('J1', -1)">−</button>
       <span class="score-value" id="score-J1">0</span>
@@ -355,7 +355,7 @@
       <span class="player-label">J2</span>
       <button class="action-btn win-btn" onclick="gagneLaManche('J2')">Gagne la manche</button>
     </div>
-    <div class="wins-row" id="wins-J2"></div>
+    <div class="wins-row" id="wins-J2"><span class="wins-text">J2 manches gagnées : 0</span></div>
     <div class="score-row">
       <button class="score-btn" onclick="changeScore('J2', -1)">−</button>
       <span class="score-value" id="score-J2">0</span>
@@ -408,13 +408,7 @@
     document.getElementById(`xp-value-${p}`).textContent = ps.xp;
 
     const winsEl = document.getElementById(`wins-${p}`);
-    winsEl.innerHTML = '';
-    for (let i = 0; i < ps.wins; i++) {
-      const span = document.createElement('span');
-      span.className = 'win-check';
-      span.textContent = '✓';
-      winsEl.appendChild(span);
-    }
+    winsEl.innerHTML = `<span class="wins-text">${p} manches gagnées : ${ps.wins}</span>`;
   }
 
   function renderTimer() {
