@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Riftbound Tracker</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background: #f0eeff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      touch-action: manipulation;
+    }
+
+    #app {
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      width: 100%;
+    }
+
+    /* ── Player sections ─────────────────────────── */
+    .player-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: #f0eeff;
+      padding: 8px 10px 6px;
+      min-height: 0;
+    }
+
+    #player-J1 {
+      transform: rotate(180deg);
+    }
+
+    /* top row */
+    .top-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .action-btn {
+      background: #d8d0ff;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 10px;
+      min-width: 90px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #333;
+      cursor: pointer;
+      text-align: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .action-btn:active { opacity: 0.75; }
+
+    .win-btn { background: #b8f0c8; }
+
+    .player-label {
+      font-size: 20px;
+      font-weight: 700;
+      color: #555;
+    }
+
+    /* wins row */
+    .wins-row {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      gap: 4px;
+      min-height: 24px;
+      align-items: center;
+    }
+
+    .win-check {
+      font-size: 18px;
+      color: #4caf50;
+      font-weight: 700;
+    }
+
+    /* score row */
+    .score-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .score-btn {
+      background: #d8d0ff;
+      border: none;
+      border-radius: 8px;
+      width: 44px;
+      height: 44px;
+      font-size: 26px;
+      font-weight: 700;
+      color: #333;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+    }
+
+    .score-btn:active { opacity: 0.75; }
+
+    .score-value {
+      font-size: clamp(40px, 8vw, 60px);
+      font-weight: 300;
+      color: #222;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    .points-label {
+      text-align: center;
+      font-size: 12px;
+      color: #888;
+      margin-top: -2px;
+    }
+
+    /* xp */
+    .xp-container { padding-bottom: 2px; }
+
+    .xp-header {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .xp-label { font-size: 11px; color: #666; font-weight: 600; }
+    .xp-level { font-size: 11px; color: #7c5cbf; font-weight: 700; }
+
+    .reset-xp-btn {
+      background: none;
+      border: none;
+      font-size: 10px;
+      color: #e57373;
+      cursor: pointer;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .xp-bar-bg {
+      height: 8px;
+      background: #ddd;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .xp-bar-fill {
+      height: 8px;
+      background: #7c5cbf;
+      border-radius: 4px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* ── Timer ──────────────────────────────────── */
+    #timer-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 0;
+      background: #f0eeff;
+      flex-shrink: 0;
+    }
+
+    .timer-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .timer-digits {
+      font-size: clamp(48px, 10vw, 68px);
+      font-weight: 300;
+      color: #222;
+      letter-spacing: 2px;
+      font-variant-numeric: tabular-nums;
+      min-width: 2.2ch;
+      text-align: center;
+    }
+
+    .pause-btn {
+      background: #ff9800;
+      border: none;
+      border-radius: 8px;
+      width: 44px;
+      height: 44px;
+      font-size: 20px;
+      color: #fff;
+      cursor: pointer;
+      margin: 0 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+    }
+
+    .pause-btn:active { opacity: 0.75; }
+
+    .reset-timer-btn {
+      background: none;
+      border: none;
+      font-size: 10px;
+      color: #999;
+      cursor: pointer;
+      margin-top: 2px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ── Winner Modal ───────────────────────────── */
+    #modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    #modal-overlay.visible { display: flex; }
+
+    .modal-card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 28px;
+      width: 300px;
+      max-width: 90vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    }
+
+    .modal-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .modal-subtitle {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 24px;
+    }
+
+    .modal-buttons-row {
+      display: flex;
+      flex-direction: row;
+      gap: 20px;
+      margin-bottom: 16px;
+    }
+
+    .choice-btn {
+      width: 100px;
+      height: 60px;
+      border: none;
+      border-radius: 12px;
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .choice-btn:active { opacity: 0.8; }
+    .choice-j1 { background: #7c5cbf; }
+    .choice-j2 { background: #4caf7d; }
+
+    .cancel-btn {
+      background: none;
+      border: none;
+      font-size: 14px;
+      color: #999;
+      cursor: pointer;
+      padding: 8px 20px;
+      margin-top: 4px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .xp-note {
+      font-size: 11px;
+      color: #aaa;
+      text-align: center;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="app">
+  <!-- J1 (rotated) -->
+  <div class="player-section" id="player-J1">
+    <div class="top-row">
+      <button class="action-btn" onclick="resetScore('J1')">Reset points</button>
+      <span class="player-label">J1</span>
+      <button class="action-btn win-btn" onclick="gagneLaManche('J1')">Gagne la manche</button>
+    </div>
+    <div class="wins-row" id="wins-J1"></div>
+    <div class="score-row">
+      <button class="score-btn" onclick="changeScore('J1', -1)">−</button>
+      <span class="score-value" id="score-J1">0</span>
+      <button class="score-btn" onclick="changeScore('J1', 1)">+</button>
+    </div>
+    <p class="points-label">Points</p>
+    <div class="xp-container">
+      <div class="xp-header">
+        <span class="xp-label" id="xp-label-J1">XP: 0</span>
+        <span class="xp-level" id="xp-level-J1">Niv. 0</span>
+        <button class="reset-xp-btn" onclick="resetXP('J1')">Reset XP</button>
+      </div>
+      <div class="xp-bar-bg">
+        <div class="xp-bar-fill" id="xp-bar-J1"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timer -->
+  <div id="timer-section">
+    <div class="timer-row">
+      <span class="timer-digits" id="timer-min">50</span>
+      <button class="pause-btn" id="pause-btn" onclick="toggleTimer()">▶</button>
+      <span class="timer-digits" id="timer-sec">00</span>
+    </div>
+    <button class="reset-timer-btn" onclick="resetTimer()">Reset timer</button>
+  </div>
+
+  <!-- J2 -->
+  <div class="player-section" id="player-J2">
+    <div class="top-row">
+      <button class="action-btn" onclick="resetScore('J2')">Reset points</button>
+      <span class="player-label">J2</span>
+      <button class="action-btn win-btn" onclick="gagneLaManche('J2')">Gagne la manche</button>
+    </div>
+    <div class="wins-row" id="wins-J2"></div>
+    <div class="score-row">
+      <button class="score-btn" onclick="changeScore('J2', -1)">−</button>
+      <span class="score-value" id="score-J2">0</span>
+      <button class="score-btn" onclick="changeScore('J2', 1)">+</button>
+    </div>
+    <p class="points-label">Points</p>
+    <div class="xp-container">
+      <div class="xp-header">
+        <span class="xp-label" id="xp-label-J2">XP: 0</span>
+        <span class="xp-level" id="xp-level-J2">Niv. 0</span>
+        <button class="reset-xp-btn" onclick="resetXP('J2')">Reset XP</button>
+      </div>
+      <div class="xp-bar-bg">
+        <div class="xp-bar-fill" id="xp-bar-J2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Winner Modal -->
+<div id="modal-overlay">
+  <div class="modal-card">
+    <p class="modal-title">🏆 Gagne la manche !</p>
+    <p class="modal-subtitle">Qui a gagné cette manche ?</p>
+    <div class="modal-buttons-row">
+      <button class="choice-btn choice-j1" onclick="confirmWinner('J1')">J1</button>
+      <button class="choice-btn choice-j2" onclick="confirmWinner('J2')">J2</button>
+    </div>
+    <button class="cancel-btn" onclick="closeModal()">Annuler</button>
+    <p class="xp-note">+200 XP pour le vainqueur · +50 XP pour le perdant</p>
+  </div>
+</div>
+
+<script>
+  const INITIAL_SECONDS = 50 * 60;
+  const XP_FOR_WIN = 200;
+  const XP_FOR_LOSE = 50;
+
+  const state = {
+    J1: { score: 0, xp: 0, wins: 0 },
+    J2: { score: 0, xp: 0, wins: 0 },
+    timerSeconds: INITIAL_SECONDS,
+    timerRunning: false,
+    pendingWinner: null,
+  };
+
+  let timerInterval = null;
+
+  // ── Render ────────────────────────────────────────
+  function renderPlayer(p) {
+    const ps = state[p];
+
+    document.getElementById(`score-${p}`).textContent = ps.score;
+
+    const xpLevel = Math.floor(ps.xp / 1000);
+    const xpPct = Math.min((ps.xp % 1000) / 10, 100);
+    document.getElementById(`xp-label-${p}`).textContent = `XP: ${ps.xp}`;
+    document.getElementById(`xp-level-${p}`).textContent = `Niv. ${xpLevel}`;
+    document.getElementById(`xp-bar-${p}`).style.width = `${xpPct}%`;
+
+    const winsEl = document.getElementById(`wins-${p}`);
+    winsEl.innerHTML = '';
+    for (let i = 0; i < ps.wins; i++) {
+      const span = document.createElement('span');
+      span.className = 'win-check';
+      span.textContent = '✓';
+      winsEl.appendChild(span);
+    }
+  }
+
+  function renderTimer() {
+    const m = Math.floor(state.timerSeconds / 60);
+    const s = state.timerSeconds % 60;
+    document.getElementById('timer-min').textContent = String(m).padStart(2, '0');
+    document.getElementById('timer-sec').textContent = String(s).padStart(2, '0');
+    document.getElementById('pause-btn').textContent = state.timerRunning ? '⏸' : '▶';
+  }
+
+  function render() {
+    renderPlayer('J1');
+    renderPlayer('J2');
+    renderTimer();
+  }
+
+  // ── Score ─────────────────────────────────────────
+  function changeScore(player, delta) {
+    state[player].score = Math.max(0, state[player].score + delta);
+    renderPlayer(player);
+  }
+
+  function resetScore(player) {
+    state[player].score = 0;
+    renderPlayer(player);
+  }
+
+  // ── XP ───────────────────────────────────────────
+  function addXP(player, amount) {
+    state[player].xp += amount;
+    renderPlayer(player);
+  }
+
+  function resetXP(player) {
+    state[player].xp = 0;
+    renderPlayer(player);
+  }
+
+  // ── Wins ─────────────────────────────────────────
+  function addWin(player) {
+    state[player].wins += 1;
+    renderPlayer(player);
+  }
+
+  // ── Timer ─────────────────────────────────────────
+  function toggleTimer() {
+    state.timerRunning = !state.timerRunning;
+    if (state.timerRunning) {
+      timerInterval = setInterval(() => {
+        if (state.timerSeconds > 0) {
+          state.timerSeconds--;
+          renderTimer();
+        } else {
+          clearInterval(timerInterval);
+          state.timerRunning = false;
+          renderTimer();
+        }
+      }, 1000);
+    } else {
+      clearInterval(timerInterval);
+    }
+    renderTimer();
+  }
+
+  function resetTimer() {
+    clearInterval(timerInterval);
+    state.timerRunning = false;
+    state.timerSeconds = INITIAL_SECONDS;
+    renderTimer();
+  }
+
+  // ── Modal ─────────────────────────────────────────
+  function gagneLaManche(player) {
+    state.pendingWinner = player;
+    document.getElementById('modal-overlay').classList.add('visible');
+  }
+
+  function confirmWinner(winner) {
+    const loser = winner === 'J1' ? 'J2' : 'J1';
+    addWin(winner);
+    addXP(winner, XP_FOR_WIN);
+    addXP(loser, XP_FOR_LOSE);
+    resetScore('J1');
+    resetScore('J2');
+    closeModal();
+  }
+
+  function closeModal() {
+    state.pendingWinner = null;
+    document.getElementById('modal-overlay').classList.remove('visible');
+  }
+
+  // close on overlay click
+  document.getElementById('modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  // ── Init ──────────────────────────────────────────
+  render();
+</script>
+</body>
+</html>
