@@ -312,7 +312,10 @@
   <!-- J1 (rotated) -->
   <div class="player-section" id="player-J1">
     <div class="top-row">
-      <button class="action-btn" onclick="resetScore('J1')">Reset points</button>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <button class="action-btn" onclick="resetScore('J1')">Reset points</button>
+        <button class="action-btn" style="background:#f8d0d0" onclick="resetXP('J1')">Reset XP</button>
+      </div>
       <span class="player-label">J1</span>
       <button class="action-btn win-btn" onclick="gagneLaManche('J1')">Gagne la manche</button>
     </div>
@@ -345,7 +348,10 @@
   <!-- J2 -->
   <div class="player-section" id="player-J2">
     <div class="top-row">
-      <button class="action-btn" onclick="resetScore('J2')">Reset points</button>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <button class="action-btn" onclick="resetScore('J2')">Reset points</button>
+        <button class="action-btn" style="background:#f8d0d0" onclick="resetXP('J2')">Reset XP</button>
+      </div>
       <span class="player-label">J2</span>
       <button class="action-btn win-btn" onclick="gagneLaManche('J2')">Gagne la manche</button>
     </div>
@@ -491,12 +497,11 @@
   }
 
   function confirmWinner(winner) {
-    const loser = winner === 'J1' ? 'J2' : 'J1';
     addWin(winner);
-    addXP(winner, XP_FOR_WIN);
-    addXP(loser, XP_FOR_LOSE);
     resetScore('J1');
     resetScore('J2');
+    resetXP('J1');
+    resetXP('J2');
     closeModal();
   }
 
