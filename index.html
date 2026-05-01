@@ -123,50 +123,51 @@
       text-align: center;
     }
 
-    .points-label {
+    .inline-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      min-width: 44px;
+    }
+
+    .xp-inline-label {
+      color: #7c5cbf;
+    }
+
+    /* xp counter row */
+    .xp-btn {
+      background: #c8b4ff;
+      border: none;
+      border-radius: 8px;
+      width: 44px;
+      height: 44px;
+      font-size: 26px;
+      font-weight: 700;
+      color: #333;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      -webkit-tap-highlight-color: transparent;
+      flex-shrink: 0;
+    }
+
+    .xp-btn:active { opacity: 0.75; }
+
+    .xp-value {
+      font-size: clamp(40px, 8vw, 60px);
+      font-weight: 300;
+      color: #7c5cbf;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    .xp-counter-label {
       text-align: center;
       font-size: 12px;
       color: #888;
       margin-top: -2px;
-    }
-
-    /* xp */
-    .xp-container { padding-bottom: 2px; }
-
-    .xp-header {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 4px;
-    }
-
-    .xp-label { font-size: 11px; color: #666; font-weight: 600; }
-    .xp-level { font-size: 11px; color: #7c5cbf; font-weight: 700; }
-
-    .reset-xp-btn {
-      background: none;
-      border: none;
-      font-size: 10px;
-      color: #e57373;
-      cursor: pointer;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .xp-bar-bg {
-      height: 8px;
-      background: #ddd;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .xp-bar-fill {
-      height: 8px;
-      background: #7c5cbf;
-      border-radius: 4px;
-      width: 0%;
-      transition: width 0.3s ease;
     }
 
     /* ── Timer ──────────────────────────────────── */
@@ -319,18 +320,14 @@
     <div class="score-row">
       <button class="score-btn" onclick="changeScore('J1', -1)">−</button>
       <span class="score-value" id="score-J1">0</span>
+      <span class="inline-label">Points</span>
       <button class="score-btn" onclick="changeScore('J1', 1)">+</button>
     </div>
-    <p class="points-label">Points</p>
-    <div class="xp-container">
-      <div class="xp-header">
-        <span class="xp-label" id="xp-label-J1">XP: 0</span>
-        <span class="xp-level" id="xp-level-J1">Niv. 0</span>
-        <button class="reset-xp-btn" onclick="resetXP('J1')">Reset XP</button>
-      </div>
-      <div class="xp-bar-bg">
-        <div class="xp-bar-fill" id="xp-bar-J1"></div>
-      </div>
+    <div class="score-row">
+      <button class="xp-btn" onclick="changeXP('J1', -1)">−</button>
+      <span class="xp-value" id="xp-value-J1">0</span>
+      <span class="inline-label xp-inline-label">XP</span>
+      <button class="xp-btn" onclick="changeXP('J1', 1)">+</button>
     </div>
   </div>
 
@@ -338,8 +335,9 @@
   <div id="timer-section">
     <div class="timer-row">
       <span class="timer-digits" id="timer-min">50</span>
-      <button class="pause-btn" id="pause-btn" onclick="toggleTimer()">▶</button>
+      <span class="timer-digits" style="margin:0 2px">:</span>
       <span class="timer-digits" id="timer-sec">00</span>
+      <button class="pause-btn" id="pause-btn" onclick="toggleTimer()" style="margin-left:12px">▶</button>
     </div>
     <button class="reset-timer-btn" onclick="resetTimer()">Reset timer</button>
   </div>
@@ -355,18 +353,14 @@
     <div class="score-row">
       <button class="score-btn" onclick="changeScore('J2', -1)">−</button>
       <span class="score-value" id="score-J2">0</span>
+      <span class="inline-label">Points</span>
       <button class="score-btn" onclick="changeScore('J2', 1)">+</button>
     </div>
-    <p class="points-label">Points</p>
-    <div class="xp-container">
-      <div class="xp-header">
-        <span class="xp-label" id="xp-label-J2">XP: 0</span>
-        <span class="xp-level" id="xp-level-J2">Niv. 0</span>
-        <button class="reset-xp-btn" onclick="resetXP('J2')">Reset XP</button>
-      </div>
-      <div class="xp-bar-bg">
-        <div class="xp-bar-fill" id="xp-bar-J2"></div>
-      </div>
+    <div class="score-row">
+      <button class="xp-btn" onclick="changeXP('J2', -1)">−</button>
+      <span class="xp-value" id="xp-value-J2">0</span>
+      <span class="inline-label xp-inline-label">XP</span>
+      <button class="xp-btn" onclick="changeXP('J2', 1)">+</button>
     </div>
   </div>
 </div>
@@ -405,12 +399,7 @@
     const ps = state[p];
 
     document.getElementById(`score-${p}`).textContent = ps.score;
-
-    const xpLevel = Math.floor(ps.xp / 1000);
-    const xpPct = Math.min((ps.xp % 1000) / 10, 100);
-    document.getElementById(`xp-label-${p}`).textContent = `XP: ${ps.xp}`;
-    document.getElementById(`xp-level-${p}`).textContent = `Niv. ${xpLevel}`;
-    document.getElementById(`xp-bar-${p}`).style.width = `${xpPct}%`;
+    document.getElementById(`xp-value-${p}`).textContent = ps.xp;
 
     const winsEl = document.getElementById(`wins-${p}`);
     winsEl.innerHTML = '';
@@ -447,7 +436,11 @@
     renderPlayer(player);
   }
 
-  // ── XP ───────────────────────────────────────────
+  // ── XP ─────────────────────────────────────────────
+  function changeXP(player, delta) {
+    state[player].xp = Math.max(0, state[player].xp + delta);
+    renderPlayer(player);
+  }
   function addXP(player, amount) {
     state[player].xp += amount;
     renderPlayer(player);
