@@ -316,10 +316,10 @@
         <button class="action-btn" onclick="resetScore('J1')">Reset points</button>
         <button class="action-btn" style="background:#f8d0d0" onclick="resetXP('J1')">Reset XP</button>
       </div>
-      <span class="player-label">J1</span>
+      <span class="player-label">Joueur 1</span>
       <button class="action-btn win-btn" onclick="gagneLaManche('J1')">Gagne la manche</button>
     </div>
-    <div class="wins-row" id="wins-J1"><span class="wins-text">J1 manches gagnées : 0</span></div>
+    <div class="wins-row" id="wins-J1"><span class="wins-text">Joueur 1 manches gagnées : 0</span></div>
     <div class="score-row">
       <button class="score-btn" onclick="changeScore('J1', -1)">−</button>
       <span class="score-value" id="score-J1">0</span>
@@ -352,10 +352,10 @@
         <button class="action-btn" onclick="resetScore('J2')">Reset points</button>
         <button class="action-btn" style="background:#f8d0d0" onclick="resetXP('J2')">Reset XP</button>
       </div>
-      <span class="player-label">J2</span>
+      <span class="player-label">Joueur 2</span>
       <button class="action-btn win-btn" onclick="gagneLaManche('J2')">Gagne la manche</button>
     </div>
-    <div class="wins-row" id="wins-J2"><span class="wins-text">J2 manches gagnées : 0</span></div>
+    <div class="wins-row" id="wins-J2"><span class="wins-text">Joueur 2 manches gagnées : 0</span></div>
     <div class="score-row">
       <button class="score-btn" onclick="changeScore('J2', -1)">−</button>
       <span class="score-value" id="score-J2">0</span>
@@ -377,8 +377,8 @@
     <p class="modal-title">🏆 Gagne la manche !</p>
     <p class="modal-subtitle">Qui a gagné cette manche ?</p>
     <div class="modal-buttons-row">
-      <button class="choice-btn choice-j1" onclick="confirmWinner('J1')">J1</button>
-      <button class="choice-btn choice-j2" onclick="confirmWinner('J2')">J2</button>
+      <button class="choice-btn choice-j1" onclick="confirmWinner('J1')">Joueur 1</button>
+      <button class="choice-btn choice-j2" onclick="confirmWinner('J2')">Joueur 2</button>
     </div>
     <button class="cancel-btn" onclick="closeModal()">Annuler</button>
     <p class="xp-note">+200 XP pour le vainqueur · +50 XP pour le perdant</p>
@@ -408,7 +408,8 @@
     document.getElementById(`xp-value-${p}`).textContent = ps.xp;
 
     const winsEl = document.getElementById(`wins-${p}`);
-    winsEl.innerHTML = `<span class="wins-text">${p} manches gagnées : ${ps.wins}</span>`;
+    const label = p === 'J1' ? 'Joueur 1' : 'Joueur 2';
+    winsEl.innerHTML = `<span class="wins-text">${label} manches gagnées : ${ps.wins}</span>`;
   }
 
   function renderTimer() {
